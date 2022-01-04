@@ -428,11 +428,34 @@ netsh advfirewall set allprofiles state off   //windows 2003之后的版本
 查看防火墙配置
 netsh firewall show config
 
-修改防火墙配置
-netsh firewall add allowedprogram c:\nc.exe "allow nc" enable   //windows 2003之前的版本
-netsh advfirewall firewall add rule name="pass nc" dir=in  action=allow program="c:\nc.exe"  //windows2003之后版本，允许指定程序进入
-netsh advfirewall firewall add rule name="allow nc" dir=out  action=allow program="c:\nc.exe"  //windows2003之后版本，允许指定程序退出
-netsh advfirewall add rule name="Remote Desktop" protocol=TCP dir=in localport=3389 action=allow  //windows2003之后版本，允许3389端口放行
+防火墙策略
+(1）恢复初始防火墙设置
+netsh advfirewall reset
+(2)关闭防火墙
+netsh advfirewall set allprofiles state off
+(3)启用桌面防火墙
+netsh advfirewall set allprofiles state on
+(4)设置默认输入和输出策略
+netsh advfirewall set allprofiles firewallpolicy allowinbound,allowoutbound
+以上是设置为允许，如果设置为拒绝使用blockinbound,blockoutbound
+(6)关闭tcp协议的139端口
+netsh advfirewall firewall add rule name=”deny tcp 139″ dir=in protocol=tcp localport=139 action=block
+(7)关闭udp协议的139端口
+netsh advfirewall firewall add rule name=”deny udp 139″ dir=in protocol=udp localport=139 action=block
+(8)关闭tcp协议的445端口
+ netsh advfirewall firewall add rule name=”deny tcp 445″ dir=in protocol=tcp localport=445 action=block
+(9)关闭udp协议的445端口
+ netsh advfirewall firewall add rule name=”deny udp 445″ dir=in protocol=udp localport=445 action=block
+(10)使用相同的方法，依次关闭TCP协议的21、22、23、137、138、3389、5800、5900端口。
+ netsh advfirewall firewall add rule name= “deny tcp 21″ dir=in protocol=tcp localport=21 action=block
+ netsh advfirewall firewall add rule name= “deny tcp 22″ dir=in protocol=tcp localport=22 action=block
+ netsh advfirewall firewall add rule name= “deny tcp 23″ dir=in protocol=tcp localport=23 action=block
+ netsh advfirewall firewall add rule name= “deny tcp 3389″ dir=in protocol=tcp localport=3389 action=block 
+ netsh advfirewall firewall add rule name= “deny tcp 5800″ dir=in protocol=tcp localport=5800 action=block
+ netsh advfirewall firewall add rule name= “deny tcp 5900″ dir=in protocol=tcp localport=5900 action=block
+ netsh advfirewall firewall add rule name= “deny tcp 137″ dir=in protocol=tcp localport=137 action=block
+ netsh advfirewall firewall add rule name= “deny tcp 138″ dir=in protocol=tcp localport=138 action=block
+
 
 ##查询并开启远程连接服务
 查看远程连接端口
@@ -3170,7 +3193,7 @@ VPS<————A主机————>B主机<————C主机
 ```
 show        //查看节点地图
 goto 1      //进入节点1——对节点1进行控制
-connect 10.48.128.130 -lpor 8888      //连接B主机8888端口
+connect 10.48.128.130  8888      //连接B主机8888端口
 goto 2	   //进入节点2-对节点2进行控制
 listen  9999   //在节点2上监听9999端口
 ```
